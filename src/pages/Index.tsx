@@ -6,6 +6,9 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { useAnswersStore } from "@/store/answersStore";
 import { useEffect } from "react";
 import { answers as initialAnswers } from "@/data/answers";
+import ReactMarkdown from 'react-markdown';
+
+<lov-add-dependency>react-markdown@latest</lov-add-dependency>
 
 // Button text mapping from questions data
 const buttonTextMap = {
@@ -64,8 +67,8 @@ const Index = () => {
                 </div>
               </AccordionTrigger>
               <AccordionContent>
-                <div className="prose max-w-none pb-4">
-                  <div className="whitespace-pre-wrap text-gray-600">{response}</div>
+                <div className="prose prose-sm max-w-none pb-4 dark:prose-invert">
+                  <ReactMarkdown>{response}</ReactMarkdown>
                 </div>
               </AccordionContent>
             </AccordionItem>
@@ -178,10 +181,10 @@ const Index = () => {
                       </AccordionTrigger>
                       <AccordionContent>
                         {authoritiesAnswer?.answer.aiAnalysis && (
-                          <div className="prose max-w-none pb-4">
-                            <div className="whitespace-pre-wrap text-gray-600">
+                          <div className="prose prose-sm max-w-none pb-4 dark:prose-invert">
+                            <ReactMarkdown>
                               {authoritiesAnswer.answer.aiAnalysis.analysis}
-                            </div>
+                            </ReactMarkdown>
                           </div>
                         )}
                       </AccordionContent>
