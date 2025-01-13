@@ -3,6 +3,18 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
+interface AIAnalysis {
+  analysis: string;
+  buttonResponses: {
+    [key: string]: string;
+  };
+}
+
+interface AnswerData {
+  value: string;
+  aiAnalysis?: AIAnalysis;
+}
+
 const Index = () => {
   // Sample data for the chart
   const growthData = [
@@ -18,6 +30,38 @@ const Index = () => {
     "dd92dc1d-3816-4732-85d2-52000bbc61f9": "Area Info",
     "e3186dcb-72ba-40e5-88b1-bb17723c682f": "Median Household Income",
     "fc724685-80e9-43b3-b9ea-46bcc74faeeb": "Local Schools Info"
+  };
+
+  // Sample answer data - in a real app, this would come from your data source
+  const sampleAnswer: AnswerData = {
+    value: "Tallaght, D24",
+    aiAnalysis: {
+      analysis: "",
+      buttonResponses: {
+        "625041ed-58a2-407e-acc6-d6fad8f2694c": "To identify the top 5 important local political stakeholders...",
+        "74babb37-f296-4c36-b066-4f618cf52966": "For the area of Tallaght, D24, the top 5 local newspapers are...",
+        "e3186dcb-72ba-40e5-88b1-bb17723c682f": "The provided information does not include data for Tallaght, D24...",
+        "fc724685-80e9-43b3-b9ea-46bcc74faeeb": "Based on the provided sources, here is the information on local schools..."
+      }
+    }
+  };
+
+  const renderAIAnalysis = (data: AnswerData) => {
+    if (!data.aiAnalysis?.buttonResponses) return null;
+
+    return Object.entries(buttonTextMap).map(([buttonId, buttonText]) => {
+      const response = data.aiAnalysis?.buttonResponses[buttonId];
+      if (!response) return null;
+
+      return (
+        <div key={buttonId} className="border rounded-lg p-4">
+          <h3 className="text-lg font-semibold mb-3">{buttonText}</h3>
+          <div className="prose max-w-none">
+            <p className="text-gray-600 whitespace-pre-wrap">{response}</p>
+          </div>
+        </div>
+      );
+    });
   };
 
   return (
@@ -103,18 +147,7 @@ const Index = () => {
         <Card className="p-6">
           <h2 className="text-xl font-bold mb-6">AI Analysis</h2>
           <div className="space-y-6">
-            {Object.entries(buttonTextMap).map(([buttonId, buttonText]) => (
-              <div key={buttonId} className="border rounded-lg p-4">
-                <h3 className="text-lg font-semibold mb-3">{buttonText}</h3>
-                <div className="prose max-w-none">
-                  <p className="text-gray-600 whitespace-pre-wrap">
-                    {/* Display the AI analysis for this button ID */}
-                    {/* Note: You'll need to replace this with the actual data from your answers */}
-                    {/* This is where you would map the buttonResponses from your answer data */}
-                  </p>
-                </div>
-              </div>
-            ))}
+            {renderAIAnalysis(sampleAnswer)}
           </div>
         </Card>
 
