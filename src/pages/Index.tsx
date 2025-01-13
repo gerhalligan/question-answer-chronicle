@@ -26,6 +26,7 @@ const Index = () => {
 
   const locationAnswer = getAnswerByQuestionId(6);
   const growthAnswer = getAnswerByQuestionId(17);
+  const authoritiesAnswer = getAnswerByQuestionId(8);
 
   // Parse growth data from the answer
   const growthData = (() => {
@@ -52,16 +53,13 @@ const Index = () => {
           const response = locationAnswer.answer.aiAnalysis?.buttonResponses[buttonId];
           if (!response) return null;
 
-          // Get first line or first 150 characters for preview
-          const previewText = response.split('\n')[0].slice(0, 150) + '...';
-
           return (
             <AccordionItem key={buttonId} value={buttonId} className="border rounded-lg px-4">
               <AccordionTrigger className="py-4">
                 <div className="flex flex-col items-start">
                   <h3 className="text-lg font-semibold">{buttonText}</h3>
                   <p className="text-sm text-gray-600 font-normal text-left">
-                    {previewText}
+                    {response.split('\n')[0].slice(0, 150) + '...'}
                   </p>
                 </div>
               </AccordionTrigger>
@@ -159,17 +157,38 @@ const Index = () => {
           {(() => {
             try {
               const authorities = JSON.parse(getAnswerByQuestionId(9)?.answer.value || '{"entries": []}').entries;
-              return authorities.map((authority: any) => (
-                <div key={authority.id} className="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
-                  <div>
-                    <h3 className="font-semibold">{authority.values['220132e5-55eb-47d2-a9a3-fadfdb33bab5']}</h3>
-                    <p className="text-sm text-gray-600">{authority.values['ec8641c1-d79b-4894-9d86-a1ca97de0e53']} Authority</p>
-                  </div>
-                  <Badge variant={authority.id === '891331d6-5d70-4034-8725-959606d165e9' ? 'default' : 'outline'}>
-                    {authority.id === '891331d6-5d70-4034-8725-959606d165e9' ? 'Primary AHJ' : 'Secondary AHJ'}
-                  </Badge>
-                </div>
-              ));
+              return (
+                <Accordion type="single" collapsible className="space-y-4">
+                  {authorities.map((authority: any) => (
+                    <AccordionItem 
+                      key={authority.id} 
+                      value={authority.id}
+                      className="border rounded-lg px-4"
+                    >
+                      <AccordionTrigger className="py-4">
+                        <div className="flex justify-between items-center w-full">
+                          <div className="flex flex-col items-start">
+                            <h3 className="font-semibold">{authority.values['220132e5-55eb-47d2-a9a3-fadfdb33bab5']}</h3>
+                            <p className="text-sm text-gray-600">{authority.values['ec8641c1-d79b-4894-9d86-a1ca97de0e53']} Authority</p>
+                          </div>
+                          <Badge variant={authority.id === '891331d6-5d70-4034-8725-959606d165e9' ? 'default' : 'outline'}>
+                            {authority.id === '891331d6-5d70-4034-8725-959606d165e9' ? 'Primary AHJ' : 'Secondary AHJ'}
+                          </Badge>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        {authoritiesAnswer?.answer.aiAnalysis && (
+                          <div className="prose max-w-none pb-4">
+                            <div className="whitespace-pre-wrap text-gray-600">
+                              {authoritiesAnswer.answer.aiAnalysis.analysis}
+                            </div>
+                          </div>
+                        )}
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              );
             } catch (e) {
               console.error('Error parsing authorities:', e);
               return null;
